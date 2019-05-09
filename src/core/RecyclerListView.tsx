@@ -387,11 +387,15 @@ export default class RecyclerListView<P extends RecyclerListViewProps, S extends
                 this._virtualRenderer.refresh();
             }
         } else if (this._relayoutReqIndex >= 0) {
-            const layoutManager = this._virtualRenderer.getLayoutManager();
-            if (layoutManager) {
-                layoutManager.relayoutFromIndex(this._relayoutReqIndex, newProps.dataProvider.getSize());
-                this._relayoutReqIndex = -1;
-                this._refreshViewability();
+            try {
+                const layoutManager = this._virtualRenderer.getLayoutManager();
+                if (layoutManager) {
+                    layoutManager.relayoutFromIndex(this._relayoutReqIndex, newProps.dataProvider.getSize());
+                    this._relayoutReqIndex = -1;
+                    this._refreshViewability();
+                }
+            } catch (error) {
+                return;
             }
         }
     }
