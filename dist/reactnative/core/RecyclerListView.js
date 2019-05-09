@@ -204,11 +204,15 @@ export default class RecyclerListView extends React.Component {
             }
         }
         else if (this._relayoutReqIndex >= 0) {
-            const layoutManager = this._virtualRenderer.getLayoutManager();
-            if (layoutManager) {
-                layoutManager.reLayoutFromIndex(this._relayoutReqIndex, newProps.dataProvider.getSize());
-                this._relayoutReqIndex = -1;
-                this._refreshViewability();
+            try {
+                const layoutManager = this._virtualRenderer.getLayoutManager();
+                if (layoutManager) {
+                    layoutManager.reLayoutFromIndex(this._relayoutReqIndex, newProps.dataProvider.getSize());
+                    this._relayoutReqIndex = -1;
+                    this._refreshViewability();
+                }
+            } catch (error) {
+                return;
             }
         }
     }
