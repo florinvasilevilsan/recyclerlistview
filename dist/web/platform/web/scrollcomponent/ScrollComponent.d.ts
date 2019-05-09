@@ -21,6 +21,6 @@ export default class ScrollComponent extends BaseScrollComponent {
     constructor(args: ScrollComponentProps);
     scrollTo(x: number, y: number, animated: boolean): void;
     render(): JSX.Element;
-    private _onScroll;
-    private _onSizeChanged;
+    private _onScroll(e);
+    private _onSizeChanged(event);
 }

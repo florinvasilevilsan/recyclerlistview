@@ -1,17 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var BinarySearch_1 = require("../utils/BinarySearch");
-var ViewabilityTracker = /** @class */ (function () {
-    function ViewabilityTracker(renderAheadOffset, initialOffset) {
-        var _this = this;
+import BinarySearch from "../utils/BinarySearch";
+export default class ViewabilityTracker {
+    constructor(renderAheadOffset, initialOffset) {
         this._layouts = [];
-        this._valueExtractorForBinarySearch = function (index) {
-            var itemRect = _this._layouts[index];
-            _this._setRelevantBounds(itemRect, _this._relevantDim);
-            return _this._relevantDim.end;
-        };
         this._currentOffset = Math.max(0, initialOffset);
-        this._actualOffset = this._currentOffset;
         this._maxOffset = 0;
         this._renderAheadOffset = renderAheadOffset;
         this._visibleWindow = { start: 0, end: 0 };
@@ -23,53 +14,47 @@ var ViewabilityTracker = /** @class */ (function () {
         this.onVisibleRowsChanged = null;
         this.onEngagedRowsChanged = null;
         this._relevantDim = { start: 0, end: 0 };
+        this._valueExtractorForBinarySearch = this._valueExtractorForBinarySearch.bind(this);
     }
-    ViewabilityTracker.prototype.init = function () {
+    init() {
         this._doInitialFit(this._currentOffset);
-    };
-    ViewabilityTracker.prototype.setLayouts = function (layouts, maxOffset) {
+    }
+    setLayouts(layouts, maxOffset) {
         this._layouts = layouts;
         this._maxOffset = maxOffset;
-    };
-    ViewabilityTracker.prototype.setDimensions = function (dimension, isHorizontal) {
+    }
+    setDimensions(dimension, isHorizontal) {
         this._isHorizontal = isHorizontal;
         this._windowBound = isHorizontal ? dimension.width : dimension.height;
-    };
-    ViewabilityTracker.prototype.forceRefresh = function () {
-        var shouldForceScroll = this._currentOffset >= (this._maxOffset - this._windowBound);
+    }
+    forceRefresh() {
+        const shouldForceScroll = this._currentOffset >= (this._maxOffset - this._windowBound);
         this.forceRefreshWithOffset(this._currentOffset);
         return shouldForceScroll;
-    };
-    ViewabilityTracker.prototype.forceRefreshWithOffset = function (offset) {
+    }
+    forceRefreshWithOffset(offset) {
         this._currentOffset = -1;
         this.updateOffset(offset);
-    };
-    ViewabilityTracker.prototype.updateOffset = function (offset) {
-        this._actualOffset = offset;
+    }
+    updateOffset(offset) {
         offset = Math.min(this._maxOffset, Math.max(0, offset));
         if (this._currentOffset !== offset) {
             this._currentOffset = offset;
             this._updateTrackingWindows(offset);
-            var startIndex = 0;
+            let startIndex = 0;
             if (this._visibleIndexes.length > 0) {
                 startIndex = this._visibleIndexes[0];
             }
             this._fitAndUpdate(startIndex);
         }
-    };
-    ViewabilityTracker.prototype.getLastOffset = function () {
+    }
+    getLastOffset() {
         return this._currentOffset;
-    };
-    ViewabilityTracker.prototype.getLastActualOffset = function () {
-        return this._actualOffset;
-    };
-    ViewabilityTracker.prototype.getEngagedIndexes = function () {
-        return this._engagedIndexes;
-    };
-    ViewabilityTracker.prototype.findFirstLogicallyVisibleIndex = function () {
-        var relevantIndex = this._findFirstVisibleIndexUsingBS(0.001);
-        var result = relevantIndex;
-        for (var i = relevantIndex - 1; i >= 0; i--) {
+    }
+    findFirstLogicallyVisibleIndex() {
+        const relevantIndex = this._findFirstVisibleIndexUsingBS(0.001);
+        let result = relevantIndex;
+        for (let i = relevantIndex - 1; i >= 0; i--) {
             if (this._isHorizontal) {
                 if (this._layouts[relevantIndex].x !== this._layouts[i].x) {
                     break;
@@ -88,16 +73,9 @@ var ViewabilityTracker = /** @class */ (function () {
             }
         }
         return result;
-    };
-    ViewabilityTracker.prototype.updateRenderAheadOffset = function (renderAheadOffset) {
-        this._renderAheadOffset = Math.max(0, renderAheadOffset);
-        this.forceRefreshWithOffset(this._currentOffset);
-    };
-    ViewabilityTracker.prototype.getCurrentRenderAheadOffset = function () {
-        return this._renderAheadOffset;
-    };
-    ViewabilityTracker.prototype._findFirstVisibleIndexOptimally = function () {
-        var firstVisibleIndex = 0;
+    }
+    _findFirstVisibleIndexOptimally() {
+        let firstVisibleIndex = 0;
         //TODO: Talha calculate this value smartly
         if (this._currentOffset > 5000) {
             firstVisibleIndex = this._findFirstVisibleIndexUsingBS();
@@ -106,26 +84,26 @@ var ViewabilityTracker = /** @class */ (function () {
             firstVisibleIndex = this._findFirstVisibleIndexLinearly();
         }
         return firstVisibleIndex;
-    };
-    ViewabilityTracker.prototype._fitAndUpdate = function (startIndex) {
-        var newVisibleItems = [];
-        var newEngagedItems = [];
+    }
+    _fitAndUpdate(startIndex) {
+        const newVisibleItems = [];
+        const newEngagedItems = [];
         this._fitIndexes(newVisibleItems, newEngagedItems, startIndex, true);
         this._fitIndexes(newVisibleItems, newEngagedItems, startIndex + 1, false);
         this._diffUpdateOriginalIndexesAndRaiseEvents(newVisibleItems, newEngagedItems);
-    };
-    ViewabilityTracker.prototype._doInitialFit = function (offset) {
+    }
+    _doInitialFit(offset) {
         offset = Math.min(this._maxOffset, Math.max(0, offset));
         this._updateTrackingWindows(offset);
-        var firstVisibleIndex = this._findFirstVisibleIndexOptimally();
+        const firstVisibleIndex = this._findFirstVisibleIndexOptimally();
         this._fitAndUpdate(firstVisibleIndex);
-    };
+    }
     //TODO:Talha switch to binary search and remove atleast once logic in _fitIndexes
-    ViewabilityTracker.prototype._findFirstVisibleIndexLinearly = function () {
-        var count = this._layouts.length;
-        var itemRect = null;
-        var relevantDim = { start: 0, end: 0 };
-        for (var i = 0; i < count; i++) {
+    _findFirstVisibleIndexLinearly() {
+        const count = this._layouts.length;
+        let itemRect = null;
+        const relevantDim = { start: 0, end: 0 };
+        for (let i = 0; i < count; i++) {
             itemRect = this._layouts[i];
             this._setRelevantBounds(itemRect, relevantDim);
             if (this._itemIntersectsVisibleWindow(relevantDim.start, relevantDim.end)) {
@@ -133,18 +111,22 @@ var ViewabilityTracker = /** @class */ (function () {
             }
         }
         return 0;
-    };
-    ViewabilityTracker.prototype._findFirstVisibleIndexUsingBS = function (bias) {
-        if (bias === void 0) { bias = 0; }
-        var count = this._layouts.length;
-        return BinarySearch_1.default.findClosestHigherValueIndex(count, this._visibleWindow.start + bias, this._valueExtractorForBinarySearch);
-    };
+    }
+    _findFirstVisibleIndexUsingBS(bias = 0) {
+        const count = this._layouts.length;
+        return BinarySearch.findClosestHigherValueIndex(count, this._visibleWindow.start + bias, this._valueExtractorForBinarySearch);
+    }
+    _valueExtractorForBinarySearch(index) {
+        const itemRect = this._layouts[index];
+        this._setRelevantBounds(itemRect, this._relevantDim);
+        return this._relevantDim.end;
+    }
     //TODO:Talha Optimize further in later revisions, alteast once logic can be replace with a BS lookup
-    ViewabilityTracker.prototype._fitIndexes = function (newVisibleIndexes, newEngagedIndexes, startIndex, isReverse) {
-        var count = this._layouts.length;
-        var relevantDim = { start: 0, end: 0 };
-        var i = 0;
-        var atLeastOneLocated = false;
+    _fitIndexes(newVisibleIndexes, newEngagedIndexes, startIndex, isReverse) {
+        const count = this._layouts.length;
+        const relevantDim = { start: 0, end: 0 };
+        let i = 0;
+        let atLeastOneLocated = false;
         if (startIndex < count) {
             if (!isReverse) {
                 for (i = startIndex; i < count; i++) {
@@ -171,10 +153,10 @@ var ViewabilityTracker = /** @class */ (function () {
                 }
             }
         }
-    };
-    ViewabilityTracker.prototype._checkIntersectionAndReport = function (index, insertOnTop, relevantDim, newVisibleIndexes, newEngagedIndexes) {
-        var itemRect = this._layouts[index];
-        var isFound = false;
+    }
+    _checkIntersectionAndReport(index, insertOnTop, relevantDim, newVisibleIndexes, newEngagedIndexes) {
+        const itemRect = this._layouts[index];
+        let isFound = false;
         this._setRelevantBounds(itemRect, relevantDim);
         if (this._itemIntersectsVisibleWindow(relevantDim.start, relevantDim.end)) {
             if (insertOnTop) {
@@ -198,8 +180,8 @@ var ViewabilityTracker = /** @class */ (function () {
             isFound = true;
         }
         return isFound;
-    };
-    ViewabilityTracker.prototype._setRelevantBounds = function (itemRect, relevantDim) {
+    }
+    _setRelevantBounds(itemRect, relevantDim) {
         if (this._isHorizontal) {
             relevantDim.end = itemRect.x + itemRect.width;
             relevantDim.start = itemRect.x;
@@ -208,58 +190,56 @@ var ViewabilityTracker = /** @class */ (function () {
             relevantDim.end = itemRect.y + itemRect.height;
             relevantDim.start = itemRect.y;
         }
-    };
-    ViewabilityTracker.prototype._isItemInBounds = function (window, itemBound) {
+    }
+    _isItemInBounds(window, itemBound) {
         return (window.start < itemBound && window.end > itemBound);
-    };
-    ViewabilityTracker.prototype._isItemBoundsBeyondWindow = function (window, startBound, endBound) {
+    }
+    _isItemBoundsBeyondWindow(window, startBound, endBound) {
         return (window.start >= startBound && window.end <= endBound);
-    };
-    ViewabilityTracker.prototype._itemIntersectsWindow = function (window, startBound, endBound) {
+    }
+    _itemIntersectsWindow(window, startBound, endBound) {
         return this._isItemInBounds(window, startBound) ||
             this._isItemInBounds(window, endBound) ||
             this._isItemBoundsBeyondWindow(window, startBound, endBound);
-    };
-    ViewabilityTracker.prototype._itemIntersectsEngagedWindow = function (startBound, endBound) {
+    }
+    _itemIntersectsEngagedWindow(startBound, endBound) {
         return this._itemIntersectsWindow(this._engagedWindow, startBound, endBound);
-    };
-    ViewabilityTracker.prototype._itemIntersectsVisibleWindow = function (startBound, endBound) {
+    }
+    _itemIntersectsVisibleWindow(startBound, endBound) {
         return this._itemIntersectsWindow(this._visibleWindow, startBound, endBound);
-    };
-    ViewabilityTracker.prototype._updateTrackingWindows = function (newOffset) {
+    }
+    _updateTrackingWindows(newOffset) {
         this._engagedWindow.start = Math.max(0, newOffset - this._renderAheadOffset);
         this._engagedWindow.end = newOffset + this._windowBound + this._renderAheadOffset;
         this._visibleWindow.start = newOffset;
         this._visibleWindow.end = newOffset + this._windowBound;
-    };
+    }
     //TODO:Talha optimize this
-    ViewabilityTracker.prototype._diffUpdateOriginalIndexesAndRaiseEvents = function (newVisibleItems, newEngagedItems) {
+    _diffUpdateOriginalIndexesAndRaiseEvents(newVisibleItems, newEngagedItems) {
         this._diffArraysAndCallFunc(newVisibleItems, this._visibleIndexes, this.onVisibleRowsChanged);
         this._diffArraysAndCallFunc(newEngagedItems, this._engagedIndexes, this.onEngagedRowsChanged);
         this._visibleIndexes = newVisibleItems;
         this._engagedIndexes = newEngagedItems;
-    };
-    ViewabilityTracker.prototype._diffArraysAndCallFunc = function (newItems, oldItems, func) {
+    }
+    _diffArraysAndCallFunc(newItems, oldItems, func) {
         if (func) {
-            var now = this._calculateArrayDiff(newItems, oldItems);
-            var notNow = this._calculateArrayDiff(oldItems, newItems);
+            const now = this._calculateArrayDiff(newItems, oldItems);
+            const notNow = this._calculateArrayDiff(oldItems, newItems);
             if (now.length > 0 || notNow.length > 0) {
-                func(newItems.slice(), now, notNow);
+                func([...newItems], now, notNow);
             }
         }
-    };
+    }
     //TODO:Talha since arrays are sorted this can be much faster
-    ViewabilityTracker.prototype._calculateArrayDiff = function (arr1, arr2) {
-        var len = arr1.length;
-        var diffArr = [];
-        for (var i = 0; i < len; i++) {
-            if (BinarySearch_1.default.findIndexOf(arr2, arr1[i]) === -1) {
+    _calculateArrayDiff(arr1, arr2) {
+        const len = arr1.length;
+        const diffArr = [];
+        for (let i = 0; i < len; i++) {
+            if (BinarySearch.findIndexOf(arr2, arr1[i]) === -1) {
                 diffArr.push(arr1[i]);
             }
         }
         return diffArr;
-    };
-    return ViewabilityTracker;
-}());
-exports.default = ViewabilityTracker;
+    }
+}
 //# sourceMappingURL=ViewabilityTracker.js.map

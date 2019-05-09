@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import * as React from "react";
 import { CSSProperties } from "react";
 import { Dimension } from "../dependencies/LayoutProvider";
@@ -7,6 +8,7 @@ export interface ScrollViewDefaultProps {
     horizontal: boolean;
     canChangeSize: boolean;
     style?: CSSProperties | null;
+    distanceFromWindow: number;
     useWindowScroll: boolean;
 }
 export interface ScrollEvent {

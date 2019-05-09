@@ -1,4 +1,3 @@
-import { Layout, LayoutManager } from "../layoutmanager/LayoutManager";
 /**
  * Created by talha.naqvi on 05/04/17.
  * You can create a new instance or inherit and override default methods
@@ -12,22 +11,12 @@ import { Layout, LayoutManager } from "../layoutmanager/LayoutManager";
  *
  * NOTE: You can also implement features such as ListView/GridView switch by simple changing your layout provider.
  */
-export declare abstract class BaseLayoutProvider {
-    shouldRefreshWithAnchoring: boolean;
-    abstract newLayoutManager(renderWindowSize: Dimension, isHorizontal?: boolean, cachedLayouts?: Layout[]): LayoutManager;
-    abstract getLayoutTypeForIndex(index: number): string | number;
-    abstract checkDimensionDiscrepancy(dimension: Dimension, type: string | number, index: number): boolean;
-}
-export declare class LayoutProvider extends BaseLayoutProvider {
+export default class LayoutProvider {
     private _getLayoutTypeForIndex;
     private _setLayoutForType;
-    private _tempDim;
-    private _lastLayoutManager;
     constructor(getLayoutTypeForIndex: (index: number) => string | number, setLayoutForType: (type: string | number, dim: Dimension, index: number) => void);
-    newLayoutManager(renderWindowSize: Dimension, isHorizontal?: boolean, cachedLayouts?: Layout[]): LayoutManager;
     getLayoutTypeForIndex(index: number): string | number;
-    setComputedLayout(type: string | number, dimension: Dimension, index: number): void;
-    checkDimensionDiscrepancy(dimension: Dimension, type: string | number, index: number): boolean;
+    setLayoutForType(type: string | number, dimension: Dimension, index: number): void;
 }
 export interface Dimension {
     height: number;

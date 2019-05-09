@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import BaseViewRenderer from "../../../core/viewrenderer/BaseViewRenderer";
+import BaseViewRenderer, { ViewRendererProps } from "../../../core/viewrenderer/BaseViewRenderer";
 /***
  * View renderer is responsible for creating a container of size provided by LayoutProvider and render content inside it.
  * Also enforces a logic to prevent re renders. RecyclerListView keeps moving these ViewRendereres around using transforms to enable recycling.
@@ -9,11 +9,12 @@ import BaseViewRenderer from "../../../core/viewrenderer/BaseViewRenderer";
 export default class ViewRenderer extends BaseViewRenderer<any> {
     private _dim;
     private _mainDiv;
+    constructor(props: ViewRendererProps<any>);
     componentDidMount(): void;
     componentDidUpdate(): void;
     render(): JSX.Element;
     protected getRef(): object | null;
-    private _setRef;
-    private _getTransform;
-    private _checkSizeChange;
+    private _setRef(div);
+    private _getTransform();
+    private _checkSizeChange();
 }

@@ -1,29 +1,26 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var react_native_1 = require("react-native");
-var DefaultNativeItemAnimator = /** @class */ (function () {
-    function DefaultNativeItemAnimator() {
+import { LayoutAnimation, Platform, UIManager } from "react-native";
+export class DefaultNativeItemAnimator {
+    constructor() {
         this.shouldAnimateOnce = true;
         this._hasAnimatedOnce = false;
         this._isTimerOn = false;
-        if (react_native_1.Platform.OS === "android" && react_native_1.UIManager.setLayoutAnimationEnabledExperimental) {
-            react_native_1.UIManager.setLayoutAnimationEnabledExperimental(true);
+        if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+            UIManager.setLayoutAnimationEnabledExperimental(true);
         }
     }
-    DefaultNativeItemAnimator.prototype.animateWillMount = function (atX, atY, itemIndex) {
-        return undefined;
-    };
-    DefaultNativeItemAnimator.prototype.animateDidMount = function (atX, atY, itemRef, itemIndex) {
+    animateWillMount(atX, atY, itemIndex) {
         //no need
-    };
-    DefaultNativeItemAnimator.prototype.animateWillUpdate = function (fromX, fromY, toX, toY, itemRef, itemIndex) {
+    }
+    animateDidMount(atX, atY, itemRef, itemIndex) {
+        //no need
+    }
+    animateWillUpdate(fromX, fromY, toX, toY, itemRef, itemIndex) {
         this._hasAnimatedOnce = true;
-    };
-    DefaultNativeItemAnimator.prototype.animateShift = function (fromX, fromY, toX, toY, itemRef, itemIndex) {
-        var _this = this;
+    }
+    animateShift(fromX, fromY, toX, toY, itemRef, itemIndex) {
         if (fromX !== toX || fromY !== toY) {
             if (!this.shouldAnimateOnce || this.shouldAnimateOnce && !this._hasAnimatedOnce) {
-                react_native_1.LayoutAnimation.configureNext(react_native_1.LayoutAnimation.Presets.easeInEaseOut);
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 this._hasAnimatedOnce = true;
             }
         }
@@ -31,18 +28,16 @@ var DefaultNativeItemAnimator = /** @class */ (function () {
             if (!this._isTimerOn) {
                 this._isTimerOn = true;
                 if (!this._hasAnimatedOnce) {
-                    setTimeout(function () {
-                        _this._hasAnimatedOnce = true;
+                    setTimeout(() => {
+                        this._hasAnimatedOnce = true;
                     }, 1000);
                 }
             }
         }
         return false;
-    };
-    DefaultNativeItemAnimator.prototype.animateWillUnmount = function (atX, atY, itemRef, itemIndex) {
+    }
+    animateWillUnmount(atX, atY, itemRef, itemIndex) {
         //no need
-    };
-    return DefaultNativeItemAnimator;
-}());
-exports.DefaultNativeItemAnimator = DefaultNativeItemAnimator;
+    }
+}
 //# sourceMappingURL=DefaultNativeItemAnimator.js.map

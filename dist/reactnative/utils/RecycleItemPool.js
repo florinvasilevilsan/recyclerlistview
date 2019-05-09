@@ -1,27 +1,25 @@
-"use strict";
 /***
  * Recycle pool for maintaining recyclable items, supports segregation by type as well.
  * Availability check, add/remove etc are all O(1), uses two maps to achieve constant time operation
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-var RecycleItemPool = /** @class */ (function () {
-    function RecycleItemPool() {
+export default class RecycleItemPool {
+    constructor() {
         this._recyclableObjectMap = {};
         this._availabilitySet = {};
     }
-    RecycleItemPool.prototype.putRecycledObject = function (objectType, object) {
+    putRecycledObject(objectType, object) {
         objectType = this._stringify(objectType);
-        var objectSet = this._getRelevantSet(objectType);
+        const objectSet = this._getRelevantSet(objectType);
         if (!this._availabilitySet[object]) {
             objectSet[object] = null;
             this._availabilitySet[object] = objectType;
         }
-    };
-    RecycleItemPool.prototype.getRecycledObject = function (objectType) {
+    }
+    getRecycledObject(objectType) {
         objectType = this._stringify(objectType);
-        var objectSet = this._getRelevantSet(objectType);
-        var recycledObject;
-        for (var property in objectSet) {
+        const objectSet = this._getRelevantSet(objectType);
+        let recycledObject = null;
+        for (const property in objectSet) {
             if (objectSet.hasOwnProperty(property)) {
                 recycledObject = property;
                 break;
@@ -32,34 +30,32 @@ var RecycleItemPool = /** @class */ (function () {
             delete this._availabilitySet[recycledObject];
         }
         return recycledObject;
-    };
-    RecycleItemPool.prototype.removeFromPool = function (object) {
+    }
+    removeFromPool(object) {
         if (this._availabilitySet[object]) {
             delete this._getRelevantSet(this._availabilitySet[object])[object];
             delete this._availabilitySet[object];
             return true;
         }
         return false;
-    };
-    RecycleItemPool.prototype.clearAll = function () {
+    }
+    clearAll() {
         this._recyclableObjectMap = {};
         this._availabilitySet = {};
-    };
-    RecycleItemPool.prototype._getRelevantSet = function (objectType) {
-        var objectSet = this._recyclableObjectMap[objectType];
+    }
+    _getRelevantSet(objectType) {
+        let objectSet = this._recyclableObjectMap[objectType];
         if (!objectSet) {
             objectSet = {};
             this._recyclableObjectMap[objectType] = objectSet;
         }
         return objectSet;
-    };
-    RecycleItemPool.prototype._stringify = function (objectType) {
+    }
+    _stringify(objectType) {
         if (typeof objectType === "number") {
             objectType = objectType.toString();
         }
         return objectType;
-    };
-    return RecycleItemPool;
-}());
-exports.default = RecycleItemPool;
+    }
+}
 //# sourceMappingURL=RecycleItemPool.js.map

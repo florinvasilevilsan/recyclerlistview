@@ -1,5 +1,5 @@
 import { Dimension } from "./dependencies/LayoutProvider";
-import { Layout } from "./layoutmanager/LayoutManager";
+import { Rect } from "./layoutmanager/LayoutManager";
 /***
  * Given an offset this utility can compute visible items. Also tracks previously visible items to compute items which get hidden or visible
  * Virtual renderer uses callbacks from this utility to main recycle pool and the render stack.
@@ -16,7 +16,6 @@ export default class ViewabilityTracker {
     onVisibleRowsChanged: TOnItemStatusChanged | null;
     onEngagedRowsChanged: TOnItemStatusChanged | null;
     private _currentOffset;
-    private _actualOffset;
     private _maxOffset;
     private _renderAheadOffset;
     private _visibleWindow;
@@ -29,33 +28,29 @@ export default class ViewabilityTracker {
     private _layouts;
     constructor(renderAheadOffset: number, initialOffset: number);
     init(): void;
-    setLayouts(layouts: Layout[], maxOffset: number): void;
+    setLayouts(layouts: Rect[], maxOffset: number): void;
     setDimensions(dimension: Dimension, isHorizontal: boolean): void;
     forceRefresh(): boolean;
     forceRefreshWithOffset(offset: number): void;
     updateOffset(offset: number): void;
     getLastOffset(): number;
-    getLastActualOffset(): number;
-    getEngagedIndexes(): number[];
     findFirstLogicallyVisibleIndex(): number;
-    updateRenderAheadOffset(renderAheadOffset: number): void;
-    getCurrentRenderAheadOffset(): number;
-    private _findFirstVisibleIndexOptimally;
-    private _fitAndUpdate;
-    private _doInitialFit;
-    private _findFirstVisibleIndexLinearly;
-    private _findFirstVisibleIndexUsingBS;
-    private _valueExtractorForBinarySearch;
-    private _fitIndexes;
-    private _checkIntersectionAndReport;
-    private _setRelevantBounds;
-    private _isItemInBounds;
-    private _isItemBoundsBeyondWindow;
-    private _itemIntersectsWindow;
-    private _itemIntersectsEngagedWindow;
-    private _itemIntersectsVisibleWindow;
-    private _updateTrackingWindows;
-    private _diffUpdateOriginalIndexesAndRaiseEvents;
-    private _diffArraysAndCallFunc;
-    private _calculateArrayDiff;
+    private _findFirstVisibleIndexOptimally();
+    private _fitAndUpdate(startIndex);
+    private _doInitialFit(offset);
+    private _findFirstVisibleIndexLinearly();
+    private _findFirstVisibleIndexUsingBS(bias?);
+    private _valueExtractorForBinarySearch(index);
+    private _fitIndexes(newVisibleIndexes, newEngagedIndexes, startIndex, isReverse);
+    private _checkIntersectionAndReport(index, insertOnTop, relevantDim, newVisibleIndexes, newEngagedIndexes);
+    private _setRelevantBounds(itemRect, relevantDim);
+    private _isItemInBounds(window, itemBound);
+    private _isItemBoundsBeyondWindow(window, startBound, endBound);
+    private _itemIntersectsWindow(window, startBound, endBound);
+    private _itemIntersectsEngagedWindow(startBound, endBound);
+    private _itemIntersectsVisibleWindow(startBound, endBound);
+    private _updateTrackingWindows(newOffset);
+    private _diffUpdateOriginalIndexesAndRaiseEvents(newVisibleItems, newEngagedItems);
+    private _diffArraysAndCallFunc(newItems, oldItems, func);
+    private _calculateArrayDiff(arr1, arr2);
 }

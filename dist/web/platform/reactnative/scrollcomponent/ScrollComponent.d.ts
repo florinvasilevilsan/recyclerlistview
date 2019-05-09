@@ -16,11 +16,11 @@ export default class ScrollComponent extends BaseScrollComponent {
     private _height;
     private _width;
     private _isSizeChangedCalledOnce;
+    private _dummyOnLayout;
     private _scrollViewRef;
     constructor(args: ScrollComponentProps);
     scrollTo(x: number, y: number, isAnimated: boolean): void;
     render(): JSX.Element;
-    private _getScrollViewRef;
-    private _onScroll;
-    private _onLayout;
+    private _onScroll(event?);
+    private _onLayout(event);
 }

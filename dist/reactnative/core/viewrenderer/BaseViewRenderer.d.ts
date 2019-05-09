@@ -1,5 +1,6 @@
+/// <reference types="react" />
 import * as React from "react";
-import { Dimension, BaseLayoutProvider } from "../dependencies/LayoutProvider";
+import LayoutProvider, { Dimension } from "../dependencies/LayoutProvider";
 import ItemAnimator from "../ItemAnimator";
 /***
  * View renderer is responsible for creating a container of size provided by LayoutProvider and render content inside it.
@@ -19,14 +20,12 @@ export interface ViewRendererProps<T> {
     data: any;
     index: number;
     itemAnimator: ItemAnimator;
-    styleOverrides?: object;
     forceNonDeterministicRendering?: boolean;
     isHorizontal?: boolean;
     extendedState?: object;
-    layoutProvider?: BaseLayoutProvider;
+    layoutProvider?: LayoutProvider;
 }
 export default abstract class BaseViewRenderer<T> extends React.Component<ViewRendererProps<T>, {}> {
-    protected animatorStyleOverrides: object | undefined;
     shouldComponentUpdate(newProps: ViewRendererProps<any>): boolean;
     componentDidMount(): void;
     componentWillMount(): void;

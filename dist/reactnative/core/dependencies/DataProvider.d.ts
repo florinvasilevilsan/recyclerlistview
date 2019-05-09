@@ -4,18 +4,13 @@
  */
 export default class DataProvider {
     rowHasChanged: (r1: any, r2: any) => boolean;
-    getStableId: (index: number) => string;
     private _firstIndexToProcess;
     private _size;
     private _data;
-    private _hasStableIds;
-    private _requiresDataChangeHandling;
-    constructor(rowHasChanged: (r1: any, r2: any) => boolean, getStableId?: (index: number) => string);
+    constructor(rowHasChanged: (r1: any, r2: any) => boolean);
     getDataForIndex(index: number): any;
     getAllData(): any[];
     getSize(): number;
-    hasStableIds(): boolean;
-    requiresDataChangeHandling(): boolean;
     getFirstIndexToProcessInternal(): number;
-    cloneWithRows(newData: any[], firstModifiedIndex?: number): DataProvider;
+    cloneWithRows(newData: any[]): DataProvider;
 }

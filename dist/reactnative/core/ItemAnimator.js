@@ -1,25 +1,19 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var BaseItemAnimator = /** @class */ (function () {
-    function BaseItemAnimator() {
+export class BaseItemAnimator {
+    animateWillMount(atX, atY, itemIndex) {
+        //no need
     }
-    BaseItemAnimator.prototype.animateWillMount = function (atX, atY, itemIndex) {
-        return undefined;
-    };
-    BaseItemAnimator.prototype.animateDidMount = function (atX, atY, itemRef, itemIndex) {
+    animateDidMount(atX, atY, itemRef, itemIndex) {
         //no need
-    };
-    BaseItemAnimator.prototype.animateWillUpdate = function (fromX, fromY, toX, toY, itemRef, itemIndex) {
+    }
+    animateWillUpdate(fromX, fromY, toX, toY, itemRef, itemIndex) {
         //no need
-    };
-    BaseItemAnimator.prototype.animateShift = function (fromX, fromY, toX, toY, itemRef, itemIndex) {
+    }
+    animateShift(fromX, fromY, toX, toY, itemRef, itemIndex) {
         return false;
-    };
-    BaseItemAnimator.prototype.animateWillUnmount = function (atX, atY, itemRef, itemIndex) {
+    }
+    animateWillUnmount(atX, atY, itemRef, itemIndex) {
         //no need
-    };
-    BaseItemAnimator.USE_NATIVE_DRIVER = true;
-    return BaseItemAnimator;
-}());
-exports.BaseItemAnimator = BaseItemAnimator;
+    }
+}
+BaseItemAnimator.USE_NATIVE_DRIVER = true;
 //# sourceMappingURL=ItemAnimator.js.map

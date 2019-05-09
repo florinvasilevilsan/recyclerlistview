@@ -1,7 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var react_native_1 = require("react-native");
-var ItemAnimator_1 = require("../../../../core/ItemAnimator");
+import { Animated, Easing, Platform } from "react-native";
+import { BaseItemAnimator } from "../../../../core/ItemAnimator";
+const IS_WEB = Platform.OS === "web";
 /**
  * Default implementation of RLV layout animations for react native. These ones are purely JS driven. Also, check out DefaultNativeItemAnimator
  * for an implementation on top of LayoutAnimation. We didn't use it by default due the fact that LayoutAnimation is quite
@@ -9,46 +8,45 @@ var ItemAnimator_1 = require("../../../../core/ItemAnimator");
  * you need to. Check DefaultNativeItemAnimator for inspiration. LayoutAnimation definitely gives better performance but is
  * hardly customizable.
  */
-var DefaultJSItemAnimator = /** @class */ (function () {
-    function DefaultJSItemAnimator() {
+export class DefaultJSItemAnimator {
+    constructor() {
         this.shouldAnimateOnce = true;
         this._hasAnimatedOnce = false;
         this._isTimerOn = false;
     }
-    DefaultJSItemAnimator.prototype.animateWillMount = function (atX, atY, itemIndex) {
-        return undefined;
-    };
-    DefaultJSItemAnimator.prototype.animateDidMount = function (atX, atY, itemRef, itemIndex) {
+    animateWillMount(atX, atY, itemIndex) {
         //no need
-    };
-    DefaultJSItemAnimator.prototype.animateWillUpdate = function (fromX, fromY, toX, toY, itemRef, itemIndex) {
+    }
+    animateDidMount(atX, atY, itemRef, itemIndex) {
+        //no need
+    }
+    animateWillUpdate(fromX, fromY, toX, toY, itemRef, itemIndex) {
         this._hasAnimatedOnce = true;
-    };
-    DefaultJSItemAnimator.prototype.animateShift = function (fromX, fromY, toX, toY, itemRef, itemIndex) {
-        var _this = this;
+    }
+    animateShift(fromX, fromY, toX, toY, itemRef, itemIndex) {
         if (fromX !== toX || fromY !== toY) {
             if (!this.shouldAnimateOnce || this.shouldAnimateOnce && !this._hasAnimatedOnce) {
-                var viewRef_1 = itemRef;
-                var animXY_1 = new react_native_1.Animated.ValueXY({ x: fromX, y: fromY });
-                animXY_1.addListener(function (value) {
-                    if (viewRef_1._isUnmountedForRecyclerListView || (_this.shouldAnimateOnce && _this._hasAnimatedOnce)) {
-                        animXY_1.stopAnimation();
+                const viewRef = itemRef;
+                const animXY = new Animated.ValueXY({ x: fromX, y: fromY });
+                animXY.addListener((value) => {
+                    if (viewRef._isUnmountedForRecyclerListView) {
+                        animXY.stopAnimation();
                         return;
                     }
-                    viewRef_1.setNativeProps(_this._getNativePropObject(value.x, value.y));
+                    viewRef.setNativeProps(this._getNativePropObject(value.x, value.y));
                 });
-                if (viewRef_1._lastAnimVal) {
-                    viewRef_1._lastAnimVal.stopAnimation();
+                if (viewRef._lastAnimVal) {
+                    viewRef._lastAnimVal.stopAnimation();
                 }
-                viewRef_1._lastAnimVal = animXY_1;
-                react_native_1.Animated.timing(animXY_1, {
+                viewRef._lastAnimVal = animXY;
+                Animated.timing(animXY, {
                     toValue: { x: toX, y: toY },
                     duration: 200,
-                    easing: react_native_1.Easing.out(react_native_1.Easing.ease),
-                    useNativeDriver: ItemAnimator_1.BaseItemAnimator.USE_NATIVE_DRIVER,
-                }).start(function () {
-                    viewRef_1._lastAnimVal = null;
-                    _this._hasAnimatedOnce = true;
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: BaseItemAnimator.USE_NATIVE_DRIVER,
+                }).start(() => {
+                    viewRef._lastAnimVal = null;
+                    this._hasAnimatedOnce = true;
                 });
                 return true;
             }
@@ -57,21 +55,20 @@ var DefaultJSItemAnimator = /** @class */ (function () {
             if (!this._isTimerOn) {
                 this._isTimerOn = true;
                 if (!this._hasAnimatedOnce) {
-                    setTimeout(function () {
-                        _this._hasAnimatedOnce = true;
+                    setTimeout(() => {
+                        this._hasAnimatedOnce = true;
                     }, 1000);
                 }
             }
         }
         return false;
-    };
-    DefaultJSItemAnimator.prototype.animateWillUnmount = function (atX, atY, itemRef, itemIndex) {
+    }
+    animateWillUnmount(atX, atY, itemRef, itemIndex) {
         itemRef._isUnmountedForRecyclerListView = true;
-    };
-    DefaultJSItemAnimator.prototype._getNativePropObject = function (x, y) {
-        return { style: { left: x, top: y } };
-    };
-    return DefaultJSItemAnimator;
-}());
-exports.DefaultJSItemAnimator = DefaultJSItemAnimator;
+    }
+    _getNativePropObject(x, y) {
+        const point = { left: x, top: y };
+        return !IS_WEB ? point : { style: point };
+    }
+}
 //# sourceMappingURL=DefaultJSItemAnimator.js.map

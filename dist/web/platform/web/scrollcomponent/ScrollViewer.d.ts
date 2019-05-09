@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import BaseScrollView from "../../../core/scrollcomponent/BaseScrollView";
+import BaseScrollView, { ScrollViewDefaultProps } from "../../../core/scrollcomponent/BaseScrollView";
 /***
  * A scrollviewer that mimics react native scrollview. Additionally on web it can start listening to window scroll events optionally.
  * Supports both window scroll and scrollable divs inside other divs.
@@ -7,6 +7,7 @@ import BaseScrollView from "../../../core/scrollcomponent/BaseScrollView";
 export default class ScrollViewer extends BaseScrollView {
     static defaultProps: {
         canChangeSize: boolean;
+        distanceFromWindow: number;
         horizontal: boolean;
         style: null;
         useWindowScroll: boolean;
@@ -14,7 +15,10 @@ export default class ScrollViewer extends BaseScrollView {
     private _mainDivRef;
     private _isScrolling;
     private _scrollEventNormalizer;
+    constructor(args: ScrollViewDefaultProps);
     componentDidMount(): void;
+    componentWillMount(): void;
+    componentWillReceiveProps(nextProps: ScrollViewDefaultProps): void;
     componentWillUnmount(): void;
     scrollTo(scrollInput: {
         x: number;
@@ -22,16 +26,16 @@ export default class ScrollViewer extends BaseScrollView {
         animated: boolean;
     }): void;
     render(): JSX.Element;
-    private _setDivRef;
-    private _getRelevantOffset;
-    private _setRelevantOffset;
-    private _isScrollEnd;
-    private _trackScrollOccurence;
-    private _doAnimatedScroll;
-    private _startListeningToDivEvents;
-    private _startListeningToWindowEvents;
-    private _onWindowResize;
-    private _windowOnScroll;
-    private _onScroll;
-    private _easeInOut;
+    private _setDivRef(div);
+    private _getRelevantOffset();
+    private _setRelevantOffset(offset);
+    private _isScrollEnd();
+    private _trackScrollOccurence();
+    private _doAnimatedScroll(offset);
+    private _startListeningToDivEvents();
+    private _startListeningToWindowEvents();
+    private _onWindowResize();
+    private _windowOnScroll();
+    private _onScroll();
+    private _easeInOut(currentTime, start, change, duration);
 }

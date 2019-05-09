@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import * as React from "react";
 import { Dimension } from "../dependencies/LayoutProvider";
 import BaseScrollView, { ScrollEvent, ScrollViewDefaultProps } from "./BaseScrollView";
@@ -13,8 +14,8 @@ export interface ScrollComponentProps {
     isHorizontal?: boolean;
     renderFooter?: () => JSX.Element | JSX.Element[] | null;
     scrollThrottle?: number;
+    distanceFromWindow?: number;
     useWindowScroll?: boolean;
-    onLayout?: any;
 }
 export default abstract class BaseScrollComponent extends React.Component<ScrollComponentProps, {}> {
     abstract scrollTo(x: number, y: number, animate: boolean): void;
